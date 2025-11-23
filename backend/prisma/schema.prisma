@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  posts        Post[]
+  files        FileAsset[]
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  section     Section
+  title       String
+  summary     String   @default("")
+  body        String
+  tags        String[]
+  coverUrl    String   @default("")
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+}
+
+model GuestEntry {
+  id        String   @id @default(uuid())
+  name      String
+  message   String
+  ipHash    String
+  createdAt DateTime @default(now())
+}
+
+model FileAsset {
+  id         String   @id @default(uuid())
+  name       String
+  size       Int
+  mime       String
+  bucket     String
+  objectKey  String
+  checksum   String
+  isPublic   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  uploader   User     @relation(fields: [uploaderId], references: [id])
+  uploaderId String
+}
+
+enum Section {
+  read
+  think
+  act
+}
