@@ -3,6 +3,14 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Load nvm if available (needed when Node/npm installed via nvm)
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  # shellcheck disable=SC1090
+  . "$NVM_DIR/nvm.sh"
+  nvm use 16 >/dev/null 2>&1 || true
+fi
+
 echo "==> Fetching latest code"
 cd "$ROOT_DIR"
 git pull --ff-only
